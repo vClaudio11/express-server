@@ -11,9 +11,16 @@ app.get('/about', (req, res) => {
     res.send('This is the about page')
 })
 
+const habits = []
+
 app.post('/habits', (req, res) => {
-    console.log(req.body)
-    res.send('Habit received')
+    const habit = req.body
+    habits.push(habit)
+    res.json({ message: 'Habit saved', habit})
+})
+
+app.get('/habits', (req, res) => {
+    res.json(habits)
 })
 
 app.listen(3000, () => {
