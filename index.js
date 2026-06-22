@@ -16,16 +16,24 @@ const habits = []
 
 app.post('/habits', async (req, res) => {
     const { name, frequency } = req.body
+    if (!name || !frequency) {
+        return res.status(400).json({ error: 'Name and frequency are required'})
+    }
     const result = await pool.query(
         'INSERT INTO habits (name, frequency) VALUES ($1, $2) RETURNING *',
         [name, frequency]
     )
-    res.json(result.rows[0])
+    res.status(201).json(result.rows[0])
 })
 
 app.get('/habits', async (req, res) => {
-    const result = await pool.query('SELECT * FROM habits')
-    res.json(result.rows)
+    try {
+        const result = await pool.query('SELECT * FROM habits')
+        res.status(201).json(result.rows)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ error: 'Failed to fetch habits'})
+    } 
 })
 
 app.listen(3000, () => {
