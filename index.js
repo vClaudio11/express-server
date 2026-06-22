@@ -1,18 +1,12 @@
 
-const pool = require('./db')
 const express = require('express')
 const app = express()
+const pool = require('./db')
+const authRouter = require('./routes/auth')
+
 app.use(express.json())
+app.use('/auth', authRouter)
 
-app.get('/', (req, res) => {
-    res.send('Server is alive')
-})
-
-app.get('/about', (req, res) => {
-    res.send('This is the about page')
-})
-
-const habits = []
 
 app.post('/habits', async (req, res) => {
     try {
