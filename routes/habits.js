@@ -4,13 +4,13 @@ const pool = require('../db')
 
 router.post('/', async (req, res) => {
     try {
-        const { name, frequency } = req.body
-        if (!name || !frequency) {
-            return res.status(400).json({ error: 'Name and frequency are required'})
+        const { title, type, description } = req.body
+        if (!title || !type || !description) {
+            return res.status(400).json({ error: 'Title, type and description are required'})
         }
         const result = await pool.query(
-            'INSERT INTO habits (name, frequency, user_id) VALUES ($1, $2, $3) RETURNING *',
-            [name, frequency, req.userId]
+            'INSERT INTO habits (title, type, description, user_id) VALUES ($1, $2, $3, $4) RETURNING *',
+            [title, type, description, req.userId]
         )
         res.status(201).json(result.rows[0])
     } catch (err) {
@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try{
         const { id } = req.params
-        const result = await pool.query(
+        await pool.query(
             'DELETE FROM habits WHERE id = $1',
             [id]
         )
@@ -34,13 +34,13 @@ router.delete('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params
-        const { name, frequency } = req.body
-        if (!name || !frequency) {
-            return res.status(400).json({ error: 'Name and frequency are required'})
+        const { title, type, description } = req.body
+        if (!title || !type || !description) {
+            return res.status(400).json({ error: 'title, type and description are required'})
         }
         const result = await pool.query(
-            'UPDATE habits SET name = $1, frequency = $2 WHERE id = $3 RETURNING *',
-            [name, frequency, id]
+            'UPDATE habits SET title = $1, type = $2, description = $3 WHERE id = $4 RETURNING *',
+            [title, type, description, id]
         )
         res.status(200).json(result.rows[0])
     } catch(err) {
