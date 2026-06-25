@@ -7,7 +7,12 @@ const verifyToken = require('./middleware/auth')
 const habitsRouter = require('./routes/habits')
 const weeklyLogRouter = require('./routes/weekly-log')
 
-app.use(cors({ origin: 'http://localhost:5173' }))
+app.use(cors({ 
+    origin: [
+        'http://localhost:5173', 
+        'https://express-server-production-23b2.up.railway.app'
+    ]
+}))
 app.use(express.json())
 app.use('/auth', authRouter)
 app.use('/weekly-log', verifyToken, weeklyLogRouter)
