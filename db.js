@@ -1,6 +1,3 @@
-pool.connect()
-  .then(() => console.log('DB connected successfully'))
-  .catch(err => console.error('DB connection failed:', err.message))
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -15,8 +12,12 @@ const pool = new Pool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     ssl: process.env.NODE_ENV === 'production' 
-        ? { rejectUnauthorized: false } 
-        : false
+    ? { rejectUnauthorized: false } 
+    : false
 })
+
+pool.connect()
+  .then(() => console.log('DB connected successfully'))
+  .catch(err => console.error('DB connection failed:', err.message))
 
 module.exports = pool
