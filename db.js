@@ -1,3 +1,7 @@
+pool.connect()
+  .then(() => console.log('DB connected successfully'))
+  .catch(err => console.error('DB connection failed:', err.message))
+
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }

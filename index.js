@@ -1,3 +1,8 @@
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err.message)
+  console.error(err.stack)
+})
+
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
