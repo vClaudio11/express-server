@@ -11,12 +11,16 @@ const verifyToken = require('./middleware/auth')
 const habitsRouter = require('./routes/habits')
 const weeklyLogRouter = require('./routes/weekly-log')
 
-app.use(cors({ 
-    origin: [
-        'http://localhost:5173', 
-        'https://habit-tracker-von-claudio.vercel.app'
-    ]
-}))
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'https://habit-tracker-von-claudio.vercel.app'
+  ],
+  credentials: true
+}
+
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions))
 app.use(express.json())
 app.use('/auth', authRouter)
 app.use('/weekly-log', verifyToken, weeklyLogRouter)
