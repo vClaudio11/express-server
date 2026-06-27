@@ -20,7 +20,6 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
-app.options('*', cors(corsOptions))
 app.use(express.json())
 app.use('/auth', authRouter)
 app.use('/weekly-log', verifyToken, weeklyLogRouter)
