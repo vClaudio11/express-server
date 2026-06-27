@@ -2,3 +2,4 @@
 startCommand = "node index.js"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
+restartPolicyType = "on_failure"
