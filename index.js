@@ -10,7 +10,7 @@ const weeklyLogRouter = require('./routes/weekly-log')
 app.use(cors({ 
     origin: [
         'http://localhost:5173', 
-        'https://express-server-production-23b2.up.railway.app'
+        'https://habit-tracker-git-main-von-claudio.vercel.app'
     ]
 }))
 app.use(express.json())
