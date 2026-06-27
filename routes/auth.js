@@ -6,14 +6,26 @@ const jwt = require('jsonwebtoken')
 
 router.post('/register', async (req, res) => {
     try {
-        const { email, password } = req.body
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required'})
+        const { username, email, password } = req.body
+        if (!username || !email || !password) {
+            return res.status(400).json({ error: 'Username, email, password are required'})
         }
+
+        // check that email is unique
+        const existing = await pool.query(
+            'SELECT email FROM users WHERE email = $1 LIMIT 1',
+            [email]
+        )
+
+        if (existing.rows.length > 0) {
+            return res.status(400).json({ error: "Emaill already exists" })
+        }
+
+        // if email is unique then insert a new row into users table
         const hashedPassword = await bcrypt.hash(password, 10)
         const result = await pool.query(
-            'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email',
-            [email, hashedPassword]
+            'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, email',
+            [username, email, hashedPassword]
         )
         return res.status(201).json(result.rows[0])
     } catch (err) {
