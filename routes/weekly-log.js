@@ -4,12 +4,26 @@ const pool = require('../db')
 
 router.get('/', async (req, res) => {
     try {
-        const result = await pool.query(
-            'SELECT * FROM weekly_log WHERE user_id = $1 ORDER BY date ASC',
-            [req.userId]
-        )
-        res.status(200).json(result.rows)
+        // let backend check for the seeded days so it is always synced 
+        const dates = Array.from({length: 7}, (_, i) => {
+            const d = new Date()
+            d.setDate(d.getDate() - (6 - i))
+            return d.toLocaleDateString('sv-SE')
+        })
+
+        const logs = []
+
+        for (const date of dates) {
+            const result = await pool.query(
+                'INSERT INTO weekly_log (date, user_id, completed, total) VALUES ($1, $2, 0, 0) ON CONFLICT (date, user_id) DO UPDATE SET date = EXCLUDED.date RETURNING *',
+                [date, req.userId]
+            )
+            logs.push(result.rows[0])
+        }
+
+        res.status(200).json(logs)
     } catch (error) {
+        console.log(error)
         res.status(500).json({ error: 'Failed to fetch weeklyLog' })
     }
 })
@@ -18,8 +32,9 @@ router.put('/:date', async (req, res) => {
     try {
         const { date } = req.params
         const { completed, total } = req.body
+
         const result = await pool.query(
-            'UPDATE weekly_log SET completed = $1, total = $2 WHERE date = $3 AND user_id = $4 RETURNING *',
+            'INSERT INTO weekly_log (completed, total, date, user_id) VALUES ($1, $2, $3, $4) ON CONFLICT (date, user_id) DO UPDATE SET completed = EXCLUDED.completed, total = EXCLUDED.total RETURNING *',
             [completed, total, date, req.userId]
         )
         res.status(200).json(result.rows[0])
