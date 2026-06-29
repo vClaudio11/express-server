@@ -58,4 +58,20 @@ router.get('/', async (req, res) => {
     } 
 })
 
+router.patch('/:id/checked', async (req, res) => {
+    try {
+        const { id } = req.params
+        const { completed } = req.body
+        const response = await pool.query(
+            'UPDATE habits SET completed = $1 where id = $2 AND user_id = $3 RETURNING *',
+            [completed, id, req.userId]
+        )
+        
+        res.status(200).json(response.rows)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Failed to update habits Todo'})
+    }
+})
+
 module.exports = router

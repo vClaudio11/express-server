@@ -40,19 +40,23 @@ router.post('/login', async (req, res) => {
             'SELECT * FROM users WHERE email = $1 ',
             [email]
         )
+
         const user = result.rows[0]
         // Check if email exists in current database
         if (!user) {
-            return res.status(401).json({ error: 'Invalid credentials' })
+            return res.status(401).json({ error: 'There is no account created yet for this email' })
         }
+
         // Compare current and stored password
         const correct = await bcrypt.compare(password, user.password)
         if (!correct) {
             return res.status(401).json({ error: 'Invalid credentials' })
         }
+
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' })
         res.status(200).json({ token })
     } catch (err) {
+        console.log(err)
         return res.status(500).json({ error: 'Failed to login'})
     }
 })
